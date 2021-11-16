@@ -44,7 +44,8 @@ CREATE TABLE Transportation(
 	ActualDistance int NOT NULL 
 	CONSTRAINT "CK_Transportation_Actual_Distance" CHECK(ActualDistance>=0)
 	CONSTRAINT "DF_Transportation_Actual_Distance" DEFAULT(0),
-	FkRouteName nvarchar(50) NOT NULL FOREIGN KEY REFERENCES Route(Name)
+	FkRouteName nvarchar(50) NOT NULL FOREIGN KEY REFERENCES Route(Name),
+	FkPremiumId INT NULL FOREIGN KEY REFERENCES Premium(PremiumId)
 )
 GO
 
@@ -53,10 +54,9 @@ GO
 
 
 CREATE TABLE TransportationsJournal(
-	TransportationFieldId int IDENTITY(1,1) PRIMARY KEY,
-	TransportationId int NOT NULL FOREIGN KEY REFERENCES Transportation(TransportationId),
+	FkTransportationId int NOT NULL FOREIGN KEY REFERENCES Transportation(TransportationId),
 	FkDriverId INT NOT NULL FOREIGN KEY REFERENCES Driver(DriverId),
-	FkPremiumId INT NULL FOREIGN KEY REFERENCES Premium(PremiumId)
+	CONSTRAINT CompKey_TransportationsJournal PRIMARY KEY (FkTransportationId, FkDriverId )
 )
 GO
 
