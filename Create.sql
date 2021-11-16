@@ -16,11 +16,6 @@ CREATE TABLE Driver(
 )
 GO
 
-DROP TABLE Driver
-GO
-
-
-
 CREATE TABLE Route(
 	Name nvarchar(50) NOT NULL PRIMARY KEY,
 	PerfectDistance int NOT NULL
@@ -31,11 +26,6 @@ CREATE TABLE Route(
 	CONSTRAINT "DF_Payment_FixedPriceInUAH" DEFAULT(0),
 )
 GO
-
-DROP TABLE Route
-GO
-
-
 
 CREATE TABLE Transportation(
 	TransportationId int IDENTITY(1,1) PRIMARY KEY,
@@ -49,18 +39,11 @@ CREATE TABLE Transportation(
 )
 GO
 
-DROP TABLE Transportation
-GO
-
-
 CREATE TABLE TransportationsJournal(
 	FkTransportationId int NOT NULL FOREIGN KEY REFERENCES Transportation(TransportationId),
 	FkDriverId INT NOT NULL FOREIGN KEY REFERENCES Driver(DriverId),
 	CONSTRAINT CompKey_TransportationsJournal PRIMARY KEY (FkTransportationId, FkDriverId )
 )
-GO
-
-DROP TABLE TransportationsJournal
 GO
 
 CREATE TABLE Premium(
@@ -69,7 +52,4 @@ CREATE TABLE Premium(
 	CONSTRAINT "CK_Premium_AmountInUAH" CHECK(AmountInUAH>=0)
 	CONSTRAINT "DF_Premium_AmountInUAH" DEFAULT(0)
 )
-GO
-
-DROP TABLE Premium
 GO
