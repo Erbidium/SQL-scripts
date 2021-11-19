@@ -10,7 +10,7 @@ JOIN Transportation ON FkTransportationId=TransportationId
 JOIN Driver ON FkDriverId = DriverId
 GO
 
-SELECT 
+SELECT *
 FROM TransportationsJournal
 JOIN Transportation ON FkTransportationId=TransportationId
 JOIN Driver ON FkDriverId = DriverId
