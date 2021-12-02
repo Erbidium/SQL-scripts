@@ -1,0 +1,10 @@
+insert into ATM (PlacementRegion) values ('Bluejay');
+insert into ATM (PlacementRegion) values ('Browning');
+insert into ATM (PlacementRegion) values ('Division');
+insert into ATM (PlacementRegion) values ('Bunting');
+insert into ATM (PlacementRegion) values ('Menomonie');
+insert into ATM (PlacementRegion) values ('Melvin');
+insert into ATM (PlacementRegion) values ('Farragut');
+insert into ATM (PlacementRegion) values ('Iowa');
+insert into ATM (PlacementRegion) values ('Vermont');
+insert into ATM (PlacementRegion) values ('Algoma');
