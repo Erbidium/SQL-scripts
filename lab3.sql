@@ -4,8 +4,7 @@ GO
 USE [FreightTransportationDB]
 GO
 
---1) Створити запити для вибірки даних з використанням (разом 15 запитів):
---a. Найпростіших умов
+-- simple conditions
 SELECT *
 FROM Driver
 WHERE CategoriesOfLicences='A, B, C'
@@ -17,7 +16,7 @@ FROM Transportation
 WHERE FkPremiumId = 1
 GO
 
---b. Операторів порівняння
+-- comparison operators
 SELECT Name, PerfectDistance Distance
 FROM Route
 WHERE PerfectDistance > 1000
@@ -26,10 +25,10 @@ GO
 
 SELECT *
 FROM Premium
-WHERE PremiumId >=5
+WHERE AmountInUAH >=1000
 GO
 
---c. Умов з використанням логічних операторів AND, OR та NOT.
+--c. conditions with logical operators AND, OR, NOT
 SELECT Surname, Experience
 FROM Driver
 WHERE Experience > 5 AND Experience <= 15
@@ -40,33 +39,34 @@ FROM Route
 WHERE FixedPriceInUAH >8000 OR FixedPriceInUAH < 4000
 GO
 
---d. Умов з використанням комбінацій логічних операторів
+--d. conditions with combinations of logical operators
 SELECT *
 FROM Driver
-WHERE NOT Experience = 3 AND (EXPERIENCE <5 OR EXPERIENCE >10)
+WHERE NOT Experience = 3 AND (EXPERIENCE <5 OR EXPERIENCE >10) AND CategoriesOfLicences='A, B'
 GO
 
-SELECT Name
+SELECT *
 FROM Driver
 WHERE Name = 'Parry' OR Name = 'Lennie'
 GO
 
---e. З використанням виразів над стовпцями, як в якості новостворених стовпців, так і умовах
+--e. Using expressions over columns, both as newly created columns and conditions
 SELECT TRIM(Name) + ' ' + TRIM(Surname) + ' ' + TRIM(Patronymic) as FIO, Experience
 from Driver where (Experience * 2 > 6)
 GO
 
 SELECT Name, Experience * 2 as [Doubled experience]
 FROM Driver
-WHERE DriverId < Experience
+WHERE Experience > 5
 GO
 
 SELECT Name, ABS(PerfectDistance - ActualDistance) [Distance difference]
 FROM Route, Transportation
+WHERE Route.Name=Transportation.FkRouteName
 GO
 
---f. Використання операторів:
---i. Приналежності множині
+--f. Use of operators:
+--i. Belonging to set
 SELECT *
 FROM Driver
 WHERE Name IN ('Teador', 'Kelcie', 'Trefor', 'Flem')
@@ -77,8 +77,8 @@ FROM Route
 WHERE Name NOT IN ('Macon - Macon', 'Shangdu - Shangdu', 'Borovany - Borovany')
 GO
 
---ii. Приналежності діапазону
-SELECT *
+--ii. Belonging to range
+SELECT Name, FixedPriceInUAH
 FROM Route
 WHERE FixedPriceInUAH BETWEEN 4000 AND 7000
 GO
@@ -88,19 +88,19 @@ FROM Transportation
 WHERE ActualDistance NOT BETWEEN 300 AND 1500
 GO
 
---iii. Відповідності шаблону
+--iii. Mathcing template
 SELECT Name
 FROM Driver
 Where Name LIKE '%Randy'
 GO
 
---iv. Відповідності регулярному виразу
+--iv. Matching regular expression
 SELECT Name
 FROM Driver
 WHERE Name LIKE '[A-Z]%a%[n|y]'
 GO
 
---v. Перевірка на невизначене значення
+--v. Checking on NULL
 SELECT FkRouteName as [Route name]
 FROM Transportation
 WHERE FkPremiumId IS NULL
@@ -111,19 +111,19 @@ FROM Transportation
 WHERE FkPremiumId IS NOT NULL AND DateOfDispatch>'2014-08-01'
 GO
 
---2) Створити запити з використанням підзапитів та з’єднань (разом 15
---запитів) (в запити повинні реалізовуватись до 3 та більше таблиць):
---a. Використання підзапитів в рядку вибірки полів та вибірки з таблиць
+--2) Create queries using subqueries and connections (15 queries in total) (up to 3 or more tables must be implemented in queries):
+--a. Use subqueries in the field of selection fields and selection from tables
 SELECT tab.Name AS [Route name]
 FROM (SELECT Name, ActualDistance FROM Route, Transportation WHERE Route.PerfectDistance>400 AND FkRouteName=Route.Name ) tab
 WHERE ActualDistance > 500
 GO
 
-SELECT (Select TOP(1) Name FROM Driver wHERE Experience>4 order by Experience) as [Best driver], (SELECT MAX(AmountInUAH) FROM Premium) as [Max premium],
-(SELECT AVG(PerfectDistance) FROM Route) as [Average distance of route]
-GO
+SELECT DateOfArrival, (SELECT Name FROM Route WHERE FkRouteName=Name) as [Route Name]
+FROM Transportation
+WHERE DateOfArrival>'2014-05-26'
 
---b. Використання підзапитів в умовах з конструкціями EXISTS, IN
+
+--b. Use of subqueries in conditions with EXISTS, IN
 SELECT Name, Surname, Patronymic
 FROM Driver
 WHERE EXISTS
@@ -132,10 +132,10 @@ GO
 
 SELECT *
 FROM Premium
-WHERE Premium.PremiumId IN (SELECT PremiumId FROM Transportation JOIN Premium ON PremiumId=FkPremiumId)
+WHERE PremiumId in(SELECT FkPremiumId FROM Transportation WHERE FkPremiumId IS NOT NULL)
 GO
 
---c. Декартовий добуток
+--c. Cartesian product
 SELECT Driver.Name [Driver name], Route.Name [Route name], AmountInUAH
 FROM Driver, Route, Premium
 GO
@@ -146,7 +146,7 @@ CROSS JOIN Route
 CROSS JOIN Driver
 GO
 
---d. З’єднання декількох таблиць (більше 2) за рівністю
+--d. Connection of several tables (more than 2) according to equality
 SELECT TransportationId, Name, Surname, FkRouteName RouteName
 FROM TransportationsJournal, Transportation, Driver
 WHERE FkTransportationId=TransportationId AND FkDriverId = DriverId
@@ -157,14 +157,13 @@ FROM TransportationsJournal, Transportation, Driver, Route, Premium
 WHERE FkTransportationId=TransportationId AND FkDriverId = DriverId AND Route.Name=FkRouteName AND PremiumId=FkPremiumId
 GO
 
---e. З’єднання декількох таблиць (більше 2) за рівністю та умовою
---відбору
+--e. Connection of several tables (more than 2) according to equality and selection condition
 SELECT DateOfArrival, ActualDistance, Driver.Name [Driver name], Experience
 FROM TransportationsJournal, Transportation, Driver, Route, Premium
 WHERE (ActualDistance>400 OR Experience>1) AND FkTransportationId=TransportationId AND FkDriverId = DriverId AND Route.Name=FkRouteName AND PremiumId=FkPremiumId
 GO
 
---f. Внутрішнього з’єднання
+--f. inner join
 SELECT TransportationId, Name, Surname, FkRouteName RouteName
 FROM TransportationsJournal
 INNER JOIN Transportation ON FkTransportationId=TransportationId
@@ -179,26 +178,27 @@ JOIN Route ON Route.Name=FkRouteName
 JOIN Premium ON PremiumId=FkPremiumId
 GO
 
---g. Лівого зовнішнього з’єднання
-SELECT DateOfDispatch, AmountInUAH
+--g. left outer join
+SELECT DateOfDispatch, AmountInUAH, FkDriverId as DriverId
 FROM TransportationsJournal
 JOIN Transportation ON FkTransportationId=TransportationId
 LEFT JOIN Premium ON PremiumId=FkPremiumId
 GO
 
-SELECT Name Surname, FkTransportationId TransportationId
+SELECT Name, Surname, FkRouteName as Route
 FROM Driver
-lEFT JOIN TransportationsJournal ON DriverId=FkDriverId
+LEFT JOIN TransportationsJournal ON DriverId=FkDriverId
+LEFT JOIN Transportation ON TransportationId=FkTransportationId
 GO
 
---h. Правого зовнішнього з’єднання
-SELECT TransportationId, Name, Surname, FkRouteName RouteName
+--h. right outer join
+SELECT Name, Surname, TransportationId, FkRouteName RouteName
 FROM TransportationsJournal
 INNER JOIN Transportation ON FkTransportationId=TransportationId
 RIGHT JOIN Driver ON FkDriverId = DriverId
 GO
 
---i. Об’єднання таблиць
+--i. tables union
 SELECT Name, PerfectDistance Number
 FROM Route
 UNION
