@@ -28,9 +28,7 @@ JOIN ATM ON ATMId=FkATMId)
 SELECT OwnerId, Name, Surname, Patronymic, PhoneNumber
 FROM Owner
 JOIN Account ON OwnerId=FkOwnerId
-JOIN Transactions ON AccountId=FkAccountId
-JOIN ATM ON ATMId=FkATMId
-WHERE AmountOfMoneyInUAH<10
+WHERE AmountOfMoneyInUAH<10 AND NOT EXISTS(SELECT * FROM Transactions WHERE FkAccountId=AccountId AND NOT DATEDIFF(mm, GETDATE(), TimeOfCompletion)=1)
 
 --d
 SELECT PlacementRegion
