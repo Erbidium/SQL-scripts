@@ -82,9 +82,9 @@ GO
 
 
 --h
-SELECT 1 AS ExperiencedDriver, MAX(Experience) as MaxExperience
+SELECT 1 AS EnoughExperiencedDriveExists, MAX(Experience) as Experience, 5 AS RequiredExperience
 FROM Driver
-HAVING MAX(Experience) > 5
+HAVING MAX(Experience) > 40
 
 SELECT SUM(PerfectDistance) as TotalPerfectDistance
 FROM Route
