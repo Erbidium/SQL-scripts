@@ -106,7 +106,7 @@ END
 DECLARE @Number int
 EXEC @Number = GetNumberOfDriversWhoHasCategory 'A, B'
 
-SELECT 'Number of drivers, who has categories A, B', @Number
+SELECT @Number [Number of drivers, who has categories A, B]
 
 --g
 CREATE PROCEDURE UpdateRoutePrice @RouteName nvarchar(50), @NewPriceInUAH money
@@ -120,15 +120,15 @@ EXEC UpdateRoutePrice 'Baiyang - Baiyang', 5000
 SELECT * FROM Route
 
 --h
-create procedure selectDriversAndRoutesOfTransportations
-as
-begin
+CREATE PROCEDURE selectDriversAndRoutesOfTransportations
+AS
+BEGIN
 	SELECT TransportationId, Name, Surname, FkRouteName RouteName
 	FROM TransportationsJournal
 	JOIN Transportation ON FkTransportationId=TransportationId
 	JOIN Driver ON FkDriverId = DriverId
-end
+END
 
-exec selectDriversAndRoutesOfTransportations
+EXEC selectDriversAndRoutesOfTransportations
 
 
