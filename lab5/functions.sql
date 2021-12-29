@@ -13,8 +13,10 @@ BEGIN
 
 	return (@RouteName)
 END
+GO
 
-SELECT dbo.TransportationRoute(5)
+SELECT dbo.TransportationRoute(5) TransportationRoute
+GO
 
 --b
 CREATE FUNCTION GetTransportationInfo(@id int)
@@ -27,9 +29,10 @@ JOIN Driver ON FkDriverId = DriverId
 JOIN Route ON Route.Name=FkRouteName
 LEFT JOIN Premium ON PremiumId=FkPremiumId
 WHERE TransportationId = @id)
+GO
 
 SELECT * FROM GetTransportationInfo(5)
-
+GO
 --c
 CREATE FUNCTION GetDriverRoutes(@id int)
 RETURNS @DriverRoutes TABLE ( [Driver name] nvarchar(50), [Route name] nvarchar(50), AmountInUAH money)
@@ -43,5 +46,7 @@ BEGIN
 								LEFT JOIN Premium ON FkPremiumId=PremiumId
 	RETURN
 END
+GO
 
 SELECT * FROM GetDriverRoutes(4)
+GO
