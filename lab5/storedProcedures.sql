@@ -48,7 +48,7 @@ SELECT * FROM Transportation
 
 DROP PROCEDURE ShowIfTransportationHasPremium
 
---ñ
+--ï¿½
 CREATE PROCEDURE showDriversWithAllCategories
 AS
 BEGIN
